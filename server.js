@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Log middleware with timestamp
 app.use((req, res, next) => {
-  const timestamp = new Date().toISOString();
+  const timestamp = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
   console.log(`${COLORS.DIM}[${timestamp}]${COLORS.RESET} ${COLORS.GREEN}${req.method}${COLORS.RESET} ${COLORS.CYAN}${req.url}${COLORS.RESET}`);
   next();
 });
@@ -27,7 +27,7 @@ app.post('/test', (req, res) => {
   // console.dir supports colored output natively
   console.dir(req.body, { depth: null, colors: true });
 
-  const endTimestamp = new Date().toISOString();
+  const endTimestamp = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
   console.log(`${COLORS.MAGENTA}⏱️  接收完成時間: ${endTimestamp}${COLORS.RESET}\n`);
 
   res.status(200).send('OK');
