@@ -26,6 +26,17 @@ app.use((req, res, next) => {
   next();
 });
 
+// API Token validation (skip for /health)
+const validateToken = (req, res, next) => {
+  const token = req.headers['x-api-token'];
+  const expectedToken = process.env.API_TOKEN;
+  
+  if (expectedToken && token !== expectedToken) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
 // Log middleware with timestamp
 app.use((req, res, next) => {
   const timestamp = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
@@ -35,7 +46,7 @@ app.use((req, res, next) => {
 
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
-app.post('/test', (req, res) => {
+app.post('/test', validateToken, (req, res) => {
   console.log(`${COLORS.YELLOW}🚀 收到 Grafana 通知:${COLORS.RESET}`);
   console.dir(req.body, { depth: null, colors: true });
 
