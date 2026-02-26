@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const { exec } = require('child_process');
 const crypto = require('crypto');
+const { saveRequest, getHistory } = require('./history');
 const app = express();
 const {
   PORT,
@@ -138,6 +139,12 @@ app.get('/stats', (req, res) => {
   });
 });
 
+app.get('/history', (req, res) => {
+  const limit = parseInt(req.query.limit || '100', 10);
+  const history = getHistory(limit);
+  res.status(200).json({ history });
+});
+
 app.post('/test', ipWhitelist, rateLimit, validateToken, validatePayload, (req, res) => {
   stats.totalRequests++;
   console.log(`${COLORS.YELLOW}🚀 收到 Grafana 通知:${COLORS.RESET}`);
@@ -159,7 +166,9 @@ app.post('/test', ipWhitelist, rateLimit, validateToken, validatePayload, (req, 
     timeZone: 'Asia/Taipei',
     hour12: false
   });
-  console.log(`${COLORS.MAGENTA}⏱️  接收完成時間: ${endTimestamp}${COLORS.RESET}\n`);
+  console.log(`${COLORS.MAGENTA}接收完成時間: ${endTimestamp}${COLORS.RESET}\n`);
+
+  saveRequest(req, res, req.body);
 
   res.status(200).json({ status: 'ok', message: 'received' });
 });
