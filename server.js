@@ -67,6 +67,18 @@ app.use((err, req, res, next) => {
   res.status(400).send('Bad Request');
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`${COLORS.GREEN}伺服器啟動在 http://localhost:${PORT}/test${COLORS.RESET}`);
 });
+
+// Graceful Shutdown
+const shutdown = (signal) => {
+  console.log(`${COLORS.YELLOW}收到 ${signal}，正在關閉伺服器...${COLORS.RESET}`);
+  server.close(() => {
+    console.log(`${COLORS.GREEN}伺服器已關閉${COLORS.RESET}`);
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
