@@ -55,6 +55,21 @@ PORT=3000 node server.js
 
 本專案已包含 `.vscode/launch.json`，您可以直接在 VS Code 中按下 `F5` 啟動除錯模式。
 
+### 4. Docker 執行（可選）
+
+```bash
+# 構建映像檔
+docker build -t webhook-server .
+
+# 執行容器
+docker run -d -p 9999:9999 --name webhook-server \
+  -e PORT=9999 \
+  -e API_TOKEN=your-secret-token \
+  -e RATE_LIMIT=60 \
+  -e ALERT_SOUND=Glass \
+  webhook-server
+```
+
 ## ⚙️ 環境變數設定 (.env)
 
 本專案支援透過 `.env` 檔案進行詳細設定。請複製 `.env.example`（若無則直接建立 `.env`）並依需求修改：
